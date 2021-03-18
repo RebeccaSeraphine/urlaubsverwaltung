@@ -1008,6 +1008,87 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("/web/application/1234");
     }
 
+    @Test
+    void ensurePersonGetsANotificationForTomorrowStartingApplication() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+
+        final Application application = createApplication(person);
+        application.setHolidayReplacement(holidayReplacement);
+        application.setHolidayReplacementNote("Some notes");
+
+        sut.sendRemindForStartsSoonApplicationsReminderNotification(List.of(application));
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("morgen beginnt deine Abwesenheit und du wirst vertreten durch:");
+        assertThat(content).contains("replacement holiday, \"Some notes\"");
+        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
+        assertThat(content).contains("/web/application/1234");
+    }
+
+    @Test
+    void ensurePersonGetsANotificationForTomorrowStartingApplicationWithoutReplacement() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+
+        sut.sendRemindForStartsSoonApplicationsReminderNotification(List.of(application));
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("morgen beginnt deine Abwesenheit.");
+        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
+        assertThat(content).contains("/web/application/1234");
+    }
+
+    @Test
+    void ensurePersonGetsANotificationForTomorrowStartingApplicationWithReplacementWithoutNote() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+
+        final Application application = createApplication(person);
+        application.setHolidayReplacement(holidayReplacement);
+
+        sut.sendRemindForStartsSoonApplicationsReminderNotification(List.of(application));
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("morgen beginnt deine Abwesenheit und du wirst vertreten durch:");
+        assertThat(content).contains("replacement holiday");
+        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
+        assertThat(content).contains("/web/application/1234");
+    }
+
     private void verifyInbox(Person inboxOwner, List<Application> applications) throws MessagingException, IOException {
 
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(inboxOwner.getEmail());

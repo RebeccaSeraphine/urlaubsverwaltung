@@ -535,7 +535,6 @@ class ApplicationMailService {
         mailService.send(mailToTemporaryAllow);
     }
 
-
     /**
      * If an application has status waiting and no boss has decided about it after a certain time, the bosses receive a
      * reminding notification.
@@ -556,6 +555,19 @@ class ApplicationMailService {
         mailService.send(mailToAllowAndRemind);
     }
 
+    void sendRemindForStartsSoonApplicationsReminderNotification(List<Application> applications){
+        for (Application application : applications) {
+            final Map<String, Object> model = new HashMap<>();
+            model.put(APPLICATION, application);
+
+            final Mail mailToStartsSoonRemind = Mail.builder()
+                .withRecipient(application.getPerson())
+                .withSubject("subject.application.remind.starts_soon")
+                .withTemplate("remind_application_starts_soon", model)
+                .build();
+            mailService.send(mailToStartsSoonRemind);
+        }
+    }
 
     void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 

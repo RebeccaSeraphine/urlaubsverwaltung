@@ -12,8 +12,25 @@ import javax.validation.Valid;
 @Validated
 public class ApplicationProperties {
 
+    /*
+     * Sends every day at 07:00 am remind mails for soon starting applications
+     */
+    @Valid
+    private ReminderNotification startsSoonNotification = new ReminderNotification();
+
+    /*
+     * Checks remind date about waiting applications by default every day at 07:00 am
+     */
     @Valid
     private ReminderNotification reminderNotification = new ReminderNotification();
+
+    public ReminderNotification getStartsSoonNotification() {
+        return startsSoonNotification;
+    }
+
+    public void setStartsSoonNotification(ReminderNotification startsSoonNotification) {
+        this.startsSoonNotification = startsSoonNotification;
+    }
 
     public ReminderNotification getReminderNotification() {
         return reminderNotification;
@@ -25,9 +42,6 @@ public class ApplicationProperties {
 
     public static class ReminderNotification {
 
-        /**
-         * Checks remind date about waiting applications by default every day at 07:00 am
-         */
         @CronExpression
         private String cron = "0 0 7 * * *";
 
