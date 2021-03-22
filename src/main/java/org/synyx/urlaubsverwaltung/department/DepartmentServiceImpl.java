@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.calendar.DepartmentCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -42,12 +43,14 @@ class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final ApplicationService applicationService;
     private final Clock clock;
+    private final DepartmentCalendarService departmentCalendarService;
 
     @Autowired
-    DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, Clock clock) {
+    DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, Clock clock, DepartmentCalendarService departmentCalendarService) {
         this.departmentRepository = departmentRepository;
         this.applicationService = applicationService;
         this.clock = clock;
+        this.departmentCalendarService = departmentCalendarService;
     }
 
     @Override
@@ -112,6 +115,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public void delete(Integer departmentId) {
 
         if (this.departmentExists(departmentId)) {
+            departmentCalendarService.deleteAllDepartmentsCalendarsForDepartment(departmentId);
             departmentRepository.deleteById(departmentId);
         } else {
             LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);

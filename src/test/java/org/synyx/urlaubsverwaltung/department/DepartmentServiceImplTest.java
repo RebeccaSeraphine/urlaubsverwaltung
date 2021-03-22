@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.calendar.DepartmentCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -53,12 +54,14 @@ class DepartmentServiceImplTest {
     private DepartmentRepository departmentRepository;
     @Mock
     private ApplicationService applicationService;
+    @Mock
+    private DepartmentCalendarService departmentCalendarService;
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
     @BeforeEach
     void setUp() {
-        sut = new DepartmentServiceImpl(departmentRepository, applicationService, clock);
+        sut = new DepartmentServiceImpl(departmentRepository, applicationService, clock, departmentCalendarService);
     }
 
     @Test
@@ -246,8 +249,8 @@ class DepartmentServiceImplTest {
         sut.delete(0);
 
         verify(departmentRepository, never()).deleteById(anyInt());
+        verify(departmentCalendarService, never()).deleteAllDepartmentsCalendarsForDepartment(anyInt());
     }
-
 
     @Test
     void ensureDeleteCallFindOneAndDelete() {
@@ -259,6 +262,7 @@ class DepartmentServiceImplTest {
 
         sut.delete(0);
 
+        verify(departmentCalendarService).deleteAllDepartmentsCalendarsForDepartment(0);
         verify(departmentRepository).existsById(0);
         verify(departmentRepository).deleteById(0);
     }

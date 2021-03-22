@@ -34,7 +34,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonCalendarService personCalendarService;
     @MockBean
-    private DepartmentCalendarService departmentCalendarService;
+    private DepartmentCalendarServiceImpl departmentCalendarServiceImpl;
     @MockBean
     private CompanyCalendarService companyCalendarService;
 
@@ -52,7 +52,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getDepartmentCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn(generateFile("calendar"));
+        when(departmentCalendarServiceImpl.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn(generateFile("calendar"));
 
         perform(get("/web/departments/1/persons/2/calendar").param("secret", secret))
             .andExpect(status().isOk());

@@ -34,17 +34,17 @@ public class CalendarSharingViewController {
 
     private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D = "redirect:/web/calendars/share/persons/%d";
     private final PersonCalendarService personCalendarService;
-    private final DepartmentCalendarService departmentCalendarService;
+    private final DepartmentCalendarServiceImpl departmentCalendarServiceImpl;
     private final CompanyCalendarService companyCalendarService;
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final CalendarAccessibleService calendarAccessibleService;
 
     @Autowired
-    public CalendarSharingViewController(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService,
+    public CalendarSharingViewController(PersonCalendarService personCalendarService, DepartmentCalendarServiceImpl departmentCalendarServiceImpl,
                                          CompanyCalendarService companyCalendarService, PersonService personService, DepartmentService departmentService, CalendarAccessibleService calendarAccessibleService) {
         this.personCalendarService = personCalendarService;
-        this.departmentCalendarService = departmentCalendarService;
+        this.departmentCalendarServiceImpl = departmentCalendarServiceImpl;
         this.companyCalendarService = companyCalendarService;
         this.personService = personService;
         this.departmentService = departmentService;
@@ -114,7 +114,7 @@ public class CalendarSharingViewController {
                                          @ModelAttribute DepartmentCalendarDto departmentCalendarDto) {
 
         final Period calendarPeriod = departmentCalendarDto.getCalendarPeriod().getPeriod();
-        departmentCalendarService.createCalendarForDepartmentAndPerson(departmentId, personId, calendarPeriod);
+        departmentCalendarServiceImpl.createCalendarForDepartmentAndPerson(departmentId, personId, calendarPeriod);
 
         return format("redirect:/web/calendars/share/persons/%d/departments/%d", personId, departmentId);
     }
@@ -123,7 +123,7 @@ public class CalendarSharingViewController {
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String unlinkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId) {
 
-        departmentCalendarService.deleteCalendarForDepartmentAndPerson(departmentId, personId);
+        departmentCalendarServiceImpl.deleteCalendarForDepartmentAndPerson(departmentId, personId);
 
         return format("redirect:/web/calendars/share/persons/%d/departments/%d", personId, departmentId);
     }
@@ -223,7 +223,7 @@ public class CalendarSharingViewController {
             departmentCalendarDto.setDepartmentName(department.getName());
             departmentCalendarDto.setActive(departmentId.equals(activeDepartmentId));
 
-            final var maybeDepartmentCalendar = departmentCalendarService.getCalendarForDepartment(departmentId, personId);
+            final var maybeDepartmentCalendar = departmentCalendarServiceImpl.getCalendarForDepartment(departmentId, personId);
             if (maybeDepartmentCalendar.isPresent()) {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
                 final var path = format("web/departments/%s/persons/%s/calendar?secret=%s", departmentId, personId, departmentCalendar.getSecret());

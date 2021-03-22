@@ -25,11 +25,11 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 public class ICalViewController {
 
     private final PersonCalendarService personCalendarService;
-    private final DepartmentCalendarService departmentCalendarService;
+    private final DepartmentCalendarServiceImpl departmentCalendarService;
     private final CompanyCalendarService companyCalendarService;
 
     @Autowired
-    public ICalViewController(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService,
+    public ICalViewController(PersonCalendarService personCalendarService, DepartmentCalendarServiceImpl departmentCalendarService,
                               CompanyCalendarService companyCalendarService) {
 
         this.personCalendarService = personCalendarService;

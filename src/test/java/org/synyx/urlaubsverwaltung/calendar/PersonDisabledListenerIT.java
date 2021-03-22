@@ -18,7 +18,7 @@ class PersonDisabledListenerIT extends TestContainersBase {
     @MockBean
     private PersonCalendarService personCalendarService;
     @MockBean
-    private DepartmentCalendarService departmentCalendarService;
+    private DepartmentCalendarServiceImpl departmentCalendarServiceImpl;
     @MockBean
     private CompanyCalendarService companyCalendarService;
     @Autowired
@@ -30,7 +30,7 @@ class PersonDisabledListenerIT extends TestContainersBase {
         applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, 42));
 
         verify(personCalendarService).deletePersonalCalendarForPerson(42);
-        verify(departmentCalendarService).deleteDepartmentsCalendarsForPerson(42);
+        verify(departmentCalendarServiceImpl).deleteDepartmentsCalendarsForPerson(42);
         verify(companyCalendarService).deleteCalendarForPerson(42);
     }
 }

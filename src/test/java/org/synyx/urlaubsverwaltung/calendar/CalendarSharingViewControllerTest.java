@@ -46,7 +46,7 @@ class CalendarSharingViewControllerTest {
     @Mock
     private PersonCalendarService personCalendarService;
     @Mock
-    private DepartmentCalendarService departmentCalendarService;
+    private DepartmentCalendarServiceImpl departmentCalendarServiceImpl;
     @Mock
     private CompanyCalendarService companyCalendarService;
     @Mock
@@ -58,7 +58,7 @@ class CalendarSharingViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new CalendarSharingViewController(personCalendarService, departmentCalendarService, companyCalendarService, personService, departmentService, calendarAccessibleService);
+        sut = new CalendarSharingViewController(personCalendarService, departmentCalendarServiceImpl, companyCalendarService, personService, departmentService, calendarAccessibleService);
     }
 
     @Test
@@ -302,8 +302,8 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(anyDepartmentCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(42, 1)).thenReturn(Optional.empty());
+        when(departmentCalendarServiceImpl.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(anyDepartmentCalendar()));
+        when(departmentCalendarServiceImpl.getCalendarForDepartment(42, 1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(view().name("calendarsharing/index"))
@@ -511,7 +511,7 @@ class CalendarSharingViewControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
 
-        verify(departmentCalendarService).createCalendarForDepartmentAndPerson(2, 1, java.time.Period.parse("P1Y"));
+        verify(departmentCalendarServiceImpl).createCalendarForDepartmentAndPerson(2, 1, java.time.Period.parse("P1Y"));
     }
 
     @Test
@@ -521,7 +521,7 @@ class CalendarSharingViewControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
 
-        verify(departmentCalendarService).deleteCalendarForDepartmentAndPerson(2, 1);
+        verify(departmentCalendarServiceImpl).deleteCalendarForDepartmentAndPerson(2, 1);
     }
 
     @Test

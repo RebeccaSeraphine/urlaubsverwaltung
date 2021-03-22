@@ -35,13 +35,13 @@ class ICalViewControllerTest {
     @Mock
     private PersonCalendarService personCalendarService;
     @Mock
-    private DepartmentCalendarService departmentCalendarService;
+    private DepartmentCalendarServiceImpl departmentCalendarServiceImpl;
     @Mock
     private CompanyCalendarService companyCalendarService;
 
     @BeforeEach
     void setUp() {
-        sut = new ICalViewController(personCalendarService, departmentCalendarService, companyCalendarService);
+        sut = new ICalViewController(personCalendarService, departmentCalendarServiceImpl, companyCalendarService);
     }
 
     @Test
@@ -83,7 +83,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartment() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(generateFile("calendar department"));
+        when(departmentCalendarServiceImpl.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(generateFile("calendar department"));
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -97,7 +97,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartmentWithBadRequest() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
+        when(departmentCalendarServiceImpl.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -108,7 +108,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartmentWithNoContent() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(CalendarException.class);
+        when(departmentCalendarServiceImpl.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(CalendarException.class);
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)

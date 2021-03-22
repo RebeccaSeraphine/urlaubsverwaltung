@@ -39,9 +39,9 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 @ExtendWith(MockitoExtension.class)
-class DepartmentCalendarServiceTest {
+class DepartmentCalendarServiceImplTest {
 
-    private DepartmentCalendarService sut;
+    private DepartmentCalendarServiceImpl sut;
 
     @Mock
     private AbsenceService absenceService;
@@ -59,7 +59,7 @@ class DepartmentCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new DepartmentCalendarService(absenceService, departmentService, personService,
+        sut = new DepartmentCalendarServiceImpl(absenceService, departmentService, personService,
             departmentCalendarRepository, iCalService, messageSource, Clock.systemUTC());
     }
 
@@ -251,6 +251,12 @@ class DepartmentCalendarServiceTest {
         sut.deleteDepartmentsCalendarsForPerson(1);
 
         verify(departmentCalendarRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void deleteAllDepartmentsCalendarsForDepartment() {
+        sut.deleteAllDepartmentsCalendarsForDepartment(1);
+        verify(departmentCalendarRepository).deleteByDepartmentId(1);
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

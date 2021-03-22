@@ -10,11 +10,11 @@ import org.synyx.urlaubsverwaltung.person.PersonDisabledEvent;
 class PersonDisabledListener {
 
     private final PersonCalendarService personCalendarService;
-    private final DepartmentCalendarService departmentCalendarService;
+    private final DepartmentCalendarServiceImpl departmentCalendarService;
     private final CompanyCalendarService companyCalendarService;
 
     @Autowired
-    PersonDisabledListener(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService, CompanyCalendarService companyCalendarService) {
+    PersonDisabledListener(PersonCalendarService personCalendarService, DepartmentCalendarServiceImpl departmentCalendarService, CompanyCalendarService companyCalendarService) {
         this.personCalendarService = personCalendarService;
         this.departmentCalendarService = departmentCalendarService;
         this.companyCalendarService = companyCalendarService;
